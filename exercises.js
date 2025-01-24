@@ -32,10 +32,10 @@ const isFibonacci = (num) => {
 
   const isInFibonaciSeries = fibonacciSeries.find((item) => item === num);
   if (isInFibonaciSeries) {
-    return "Número pertence à sequência de Fibonacci.";
+    return `Número ${num} pertence à sequência de Fibonacci.`;
   }
 
-  return "Número não pertence à sequência de Fibonacci.";
+  return `Número ${num} pertence à sequência de Fibonacci.`;
 };
 
 console.log(isFibonacci(21));
@@ -52,27 +52,36 @@ console.log(isFibonacci(14));
 console.log("Resposta da terceira questão:");
 
 const profits = JSON.parse(fs.readFileSync("profits.json", "utf8"));
-
-console.log("Faturamento do mês ->", profits);
 const calculateProfits = () => {
-  const profitsWithoutWeekends = profits.filter((item) => item !== 0);
+  const profitsWithoutWeekends = profits.filter((item) => item.valor !== 0.0);
 
-  const worstDay = Math.min(...profitsWithoutWeekends);
-  const bestDay = Math.max(...profitsWithoutWeekends);
+  const profitsWithoutWeekendsValues = profitsWithoutWeekends.map(
+    (item) => item.valor
+  );
+
+  const worstDay = Math.min(...profitsWithoutWeekendsValues);
+  const bestDay = Math.max(...profitsWithoutWeekendsValues);
 
   let total = 0;
-  for (let i = 0; i < profitsWithoutWeekends.length; i++) {
-    total += profitsWithoutWeekends[i];
+  for (let i = 0; i < profitsWithoutWeekendsValues.length; i++) {
+    total += profitsWithoutWeekendsValues[i];
   }
-  let avg = total / profitsWithoutWeekends.length;
+  let avg = total / profitsWithoutWeekendsValues.length;
 
   const betterThanAverageDays = [];
 
-  for (const day in profitsWithoutWeekends) {
-    if (day > avg) betterThanAverageDays.push(day);
+  for (let i = 0; i <= profitsWithoutWeekendsValues.length; i++) {
+    if (profitsWithoutWeekendsValues[i] > avg)
+      betterThanAverageDays.push(profitsWithoutWeekendsValues[i]);
   }
 
-  return `O menor valor de faturamento ocorrido no mês é R$${worstDay}. O maior é ${bestDay}. O número de dias em que o valor de faturamento diário foi superior à média mensal é ${betterThanAverageDays.length}. Essa média é R$${avg}.`;
+  return `O menor valor de faturamento ocorrido no mês é R$${worstDay.toFixed(
+    2
+  )}. O maior é R$${bestDay.toFixed(
+    2
+  )}. O número de dias em que o valor de faturamento diário foi superior à média mensal é ${
+    betterThanAverageDays.length
+  }. Essa média é R$${avg.toFixed(2)}.`;
 };
 
 console.log(calculateProfits());
